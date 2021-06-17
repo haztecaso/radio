@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  icecast:
+    image: infiniteproject/icecast
+    container_name: "radio_icecast"
+    ports:
+      - "${ICECAST_PORT:-8000}:8000"
+    environment:
+      - ICECAST_SOURCE_PASSWORD
+      - ICECAST_ADMIN_PASSWORD
+      - ICECAST_RELAY_PASSWORD
+      - ICECAST_MAX_SOURCES
+      - ICECAST_ADMIN_EMAIL
+      - ICECAST_HOSTNAME=icecast
+    restart: unless-stopped
+  mpd:
+    image: vimagick/mpd
+    container_name: "radio_mpd"
+    depends_on: [icecast]
+    command: >
+        sh -c "sed 's/ICECAST_SOURCE_PASSWORD/${ICECAST_SOURCE_PASSWORD:-hackme}/g' /etc/mpd.conf.template > /etc/mpd.conf
+        && mpd --stdout --no-daemon"
+    ports:
+      - "6601:6600"
+    volumes:
+      - "./mpd.conf.template:/etc/mpd.conf.template:ro"
+      - "${MPD_DB}:/var/lib/mpd/database:ro"
+      - "${MUSIC_DIR}:/var/lib/mpd/music:ro"
+      - "${PLAYLISTS_DIR}:/var/lib/mpd/playlists:ro"
+    restart: unless-stopped
+  liquidsoap:
+    image: "savonet/liquidsoap:v1.4.3"
+    container_name: "radio_liquidsoap"
+    depends_on: [icecast]
+    command: "liquidsoap /script.liq"
+    volumes:
+      - "${MUSIC_DIR}:/music:ro"
+      - "./script.liq:/script.liq:ro"
+    environment:
+      - ICECAST_SOURCE_PASSWORD
+      - STREAM_NAME
+      - STREAM_DESC
+      - STREAM_URL
+      - STREAM_MOUNTPOINT
+    restart: unless-stopped
