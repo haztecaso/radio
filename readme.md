@@ -21,7 +21,7 @@
 ## Running
 
 - Run `docker-compose up -d`
-- Listen to `http://localhost:8000/`
+- Listen to [http://localhost:8000/](http://localhost:8000/)
 
 ## To do
 
