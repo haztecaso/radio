@@ -31,4 +31,7 @@
 
 ## References
 
+- [infiniteproject/icecast](https://github.com/infiniteproject/icecast)
+- [vimagick/dockerfiles/mpd](https://github.com/vimagick/dockerfiles/tree/master/mpd)
+- [savonet/liquidsoap: Audio and video streaming language](https://github.com/savonet/liquidsoap)
 - [mkody/AutoRadio](https://github.com/mkody/AutoRadio)
